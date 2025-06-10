@@ -3,6 +3,24 @@
 #include <sstream>
 #include <cstdlib>
 
+void handleExit(std::istringstream &iss){
+  int status = 0;
+  if (iss >> status)
+  {
+    std::exit(status);
+  }
+  else
+  {
+    std::exit(0);
+  }
+}
+
+void handleEcho(std::istringstream &iss){
+  std::string rest;
+  std::getline(iss, rest);
+  std::cout << rest << std::endl;
+}
+
 int main()
 {
   // Flush after every std::cout / std:cerr
@@ -12,11 +30,13 @@ int main()
   while (true)
   {
     std::cout << "$ ";
-    if (!std::getline(std::cin, input)) {
+    if (!std::getline(std::cin, input))
+    {
       break;
     }
 
-    if (input.empty()) {
+    if (input.empty())
+    {
       continue;
     }
 
@@ -24,13 +44,13 @@ int main()
     std::string command;
     iss >> command;
 
-    if (command == "exit") {
-      int status = 0;
-      if (iss >> status) {
-        std::exit(status);
-      } else {
-        std::exit(0);
-      }
+    if (command == "exit")
+    {
+      handleExit(iss);
+    }
+    else if (command == "echo")
+    {
+      handleEcho(iss);
     }
 
     std::cout << input << ": command not found" << std::endl;
