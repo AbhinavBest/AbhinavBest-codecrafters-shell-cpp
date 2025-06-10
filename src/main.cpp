@@ -17,7 +17,7 @@ void handleExit(std::istringstream &iss){
 
 void handleEcho(std::istringstream &iss){
   std::string rest;
-  std::getline(iss, rest);
+  std::getline(iss >> std::ws, rest);
   std::cout << rest << std::endl;
 }
 
@@ -29,7 +29,7 @@ int main()
   std::string input;
   while (true)
   {
-    std::cout << "$";
+    std::cout << "$ ";
     if (!std::getline(std::cin, input))
     {
       break;
