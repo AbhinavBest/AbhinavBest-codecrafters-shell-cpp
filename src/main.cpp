@@ -29,7 +29,7 @@ int main()
   std::string input;
   while (true)
   {
-    std::cout << "$ ";
+    std::cout << "$";
     if (!std::getline(std::cin, input))
     {
       break;
@@ -51,9 +51,11 @@ int main()
     else if (command == "echo")
     {
       handleEcho(iss);
+    } else{
+       std::cout << input << ": command not found" << std::endl;
     }
 
-    std::cout << input << ": command not found" << std::endl;
+   
   }
   return 0;
 }
