@@ -63,6 +63,7 @@ void handleType(std::istringstream &iss)
     if (builtinCommands.count(subcommand))
     {
       std::cout << subcommand << " is a shell builtin" << std::endl;
+      return;
     }
 
     char *pathEnv = std::getenv("PATH");
