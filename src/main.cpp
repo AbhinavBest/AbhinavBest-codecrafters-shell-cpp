@@ -2,8 +2,11 @@
 #include <string>
 #include <sstream>
 #include <cstdlib>
+#include <vector>
+using namespace std;
 
-void handleExit(std::istringstream &iss){
+void handleExit(std::istringstream &iss)
+{
   int status = 0;
   if (iss >> status)
   {
@@ -15,10 +18,25 @@ void handleExit(std::istringstream &iss){
   }
 }
 
-void handleEcho(std::istringstream &iss){
+void handleEcho(std::istringstream &iss)
+{
   std::string rest;
   std::getline(iss >> std::ws, rest);
   std::cout << rest << std::endl;
+}
+
+void handleType(std::istringstream &iss)
+{
+  std::string subcommand;
+  iss >> subcommand;
+
+  vector<string> builtinCommands = {"exit", "echo", "type"};
+  if (std::find(builtinCommands.begin(), builtinCommands.end(), subcommand) != builtinCommands.end())
+  {
+  std::cout << subcommand << "is a shell builtin" << std::endl;
+  } else {
+    std::cout << subcommand << ": not found" << std:: endl;
+  }
 }
 
 int main()
@@ -51,11 +69,15 @@ int main()
     else if (command == "echo")
     {
       handleEcho(iss);
-    } else{
-       std::cout << input << ": command not found" << std::endl;
     }
-
-   
+    else if (command == "type")
+    {
+      handleType(iss);
+    }
+    else
+    {
+      std::cout << input << ": command not found" << std::endl;
+    }
   }
   return 0;
 }
