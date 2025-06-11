@@ -4,7 +4,31 @@
 #include <cstdlib>
 #include <vector>
 #include <unordered_set>
-using namespace std;
+#include <cstring>
+#ifdef _WIN32
+#include <io.h>
+#define ACCESS _access
+#define F_OK 0
+#else
+#include <unistd.h>
+#define ACCESS access
+#endif
+
+bool isExecutable(const std::string &path) {
+#ifdef _WIN32
+  const std::vector<std::string> extensions = {".exe", ".bat", ".cmd"};
+  for (const auto &ext : extensions) {
+    if (path.size() >= ext.size() &&
+        path.compare(path.size() - ext.size(), ext.size(), ext) == 0 &&
+        ACCESS(path.c_str(), F_OK) == 0) {
+      return true;
+    }
+  }
+  return false;
+#else
+  return ACCESS(path.c_str(), X_OK) == 0;
+#endif
+}
 
 const std::unordered_set<std::string> builtinCommands = {"exit", "echo", "type"};
 
@@ -33,17 +57,42 @@ void handleType(std::istringstream &iss)
   std::string subcommand;
   while (iss >> subcommand)
   {
+
+    bool found = false;
+
     if (builtinCommands.count(subcommand))
     {
       std::cout << subcommand << " is a shell builtin" << std::endl;
     }
-    else
+
+    char *pathEnv = std::getenv("PATH");
+    if (!pathEnv)
+    {
+      std::cerr << "PATH not set" << std::endl;
+      return;
+    }
+    std::string pathStr(pathEnv);
+    std::stringstream ss(pathStr);
+    std::string dir;
+    while (std::getline(ss, dir, ':'))
+    {
+#ifdef _WIN32
+      std::string fullPath = dir + "\\" + subcommand;
+#else
+      std::string fullPath = dir + "/" + subcommand;
+#endif
+      if (isExecutable(fullPath))
+      {
+        std::cout << subcommand << " is " << fullPath << std::endl;
+        return;
+      }
+    }
+    if (!found)
     {
       std::cout << subcommand << ": not found" << std::endl;
     }
   }
 }
-
 
 int main()
 {
