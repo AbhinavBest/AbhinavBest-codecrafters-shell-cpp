@@ -3,7 +3,10 @@
 #include <sstream>
 #include <cstdlib>
 #include <vector>
+#include <unordered_set>
 using namespace std;
+
+const std::unordered_set<std::string> builtinCommands = {"exit", "echo", "type"};
 
 void handleExit(std::istringstream &iss)
 {
@@ -28,16 +31,19 @@ void handleEcho(std::istringstream &iss)
 void handleType(std::istringstream &iss)
 {
   std::string subcommand;
-  iss >> subcommand;
-
-  vector<string> builtinCommands = {"exit", "echo", "type"};
-  if (std::find(builtinCommands.begin(), builtinCommands.end(), subcommand) != builtinCommands.end())
+  while (iss >> subcommand)
   {
-  std::cout << subcommand << "is a shell builtin" << std::endl;
-  } else {
-    std::cout << subcommand << ": not found" << std:: endl;
+    if (builtinCommands.count(subcommand))
+    {
+      std::cout << subcommand << " is a shell builtin" << std::endl;
+    }
+    else
+    {
+      std::cout << subcommand << ": not found" << std::endl;
+    }
   }
 }
+
 
 int main()
 {
